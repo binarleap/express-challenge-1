@@ -21,6 +21,15 @@ class Controller {
     }
 
     // filter required values
+    filterEmptyQuery(fields: string[]): void {
+        for (const field of fields) {
+            if (validator.isEmpty(`${this.req.query[field] ?? ''}`)) {
+                this.makeError(field, `${field} is required`)
+            }
+        }
+    }
+
+    // filter required values
     filterEmpty(fields: string[]): void {
         for (const field of fields) {
             if (validator.isEmpty(`${this.req.body[field] ?? ''}`)) {
@@ -32,6 +41,11 @@ class Controller {
     // validate email address
     isEmailAddress(email: string): boolean {
         return validator.isEmail(`${email}`)
+    }
+
+    // validate dummy coordinate
+    isDummyCoordinate(latitude: string, longitude: string): boolean {
+        return validator.isLatLong(`${latitude},${longitude}`)
     }
 
     // make an error in the response object

@@ -13,6 +13,15 @@ class Controller {
         };
     }
     // filter required values
+    filterEmptyQuery(fields) {
+        var _a;
+        for (const field of fields) {
+            if (validator.isEmpty(`${(_a = this.req.query[field]) !== null && _a !== void 0 ? _a : ''}`)) {
+                this.makeError(field, `${field} is required`);
+            }
+        }
+    }
+    // filter required values
     filterEmpty(fields) {
         var _a;
         for (const field of fields) {
@@ -24,6 +33,10 @@ class Controller {
     // validate email address
     isEmailAddress(email) {
         return validator.isEmail(`${email}`);
+    }
+    // validate dummy coordinate
+    isDummyCoordinate(latitude, longitude) {
+        return validator.isLatLong(`${latitude},${longitude}`);
     }
     // make an error in the response object
     makeError(field, error) {

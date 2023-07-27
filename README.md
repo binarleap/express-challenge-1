@@ -1,4 +1,4 @@
-Authentication API with express js and JWT token.
+Senior Node.js developer challenge with express js and JWT token.
 
 # To run:
 - clone the repository.
