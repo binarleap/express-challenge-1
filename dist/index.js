@@ -1,16 +1,56 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const app = (0, express_1.default)();
+var _a;
+import express from 'express';
+import dotenv from 'dotenv';
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import mongoose from 'mongoose';
+import apiRouter from './src/routes/api.js';
+dotenv.config();
+const app = express();
 const port = process.env.PORT;
-app.get('/', (req, res) => {
-    res.send('Express + TypeScript Server');
+// setup json parser
+app.use(express.json());
+// setup routes
+app.use('/api', apiRouter);
+// setup swagger
+const swaggerOptions = {
+    definition: {
+        openapi: "3.1.0",
+        info: {
+            title: "Ellingsen Senior Back End Developer Challenge by Reza Shams",
+            version: "0.0.0",
+            description: "Ellingsen Senior Back End Developer Challenge by Reza Shams",
+            license: {
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
+            },
+            contact: {
+                name: "RezaShams",
+                url: "",
+                email: "rezashams.work@gmail.com",
+            },
+        },
+        servers: [
+            {
+                url: `http://localhost:${port}`,
+            },
+        ],
+    },
+    apis: ["./src/routes/*.ts"],
+};
+const specs = swaggerJsdoc(swaggerOptions);
+app.use("/documentation", swaggerUi.serve, swaggerUi.setup(specs));
+// connect to mongodb
+const mongoString = (_a = process.env.DATABASE_URL) !== null && _a !== void 0 ? _a : '';
+mongoose.connect(mongoString);
+const database = mongoose.connection;
+database.on('error', (error) => {
+    console.log(error);
 });
+database.once('connected', () => {
+    console.log('Database Connected');
+});
+// run the server
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
