@@ -14,12 +14,18 @@ export const deleteRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, 
     const { id } = req.params;
     try {
         // get restaurant
-        const removeRestaurant = yield Restaurant.findByIdAndRemove(id);
-        if (removeRestaurant) {
-            controller.response.message = "Restaurant deleted";
+        const restaurant = yield Restaurant.findById(id);
+        if (restaurant) {
+            const removeRestaurant = yield Restaurant.findByIdAndRemove(id);
+            if (removeRestaurant) {
+                controller.response.message = "Restaurant deleted";
+            }
+            else {
+                controller.makeServerError();
+            }
         }
         else {
-            controller.makeServerError();
+            controller.makeError('id', 'Restaurant id does not exist');
         }
     }
     catch (e) {

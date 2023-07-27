@@ -11,12 +11,18 @@ export const deleteRestaurant = async (req: Request<{ id: string }>, res: Respon
 
     try {
         // get restaurant
-        const removeRestaurant = await Restaurant.findByIdAndRemove(id)
+        const restaurant = await Restaurant.findById(id)
 
-        if  (removeRestaurant) {
-            controller.response.message = "Restaurant deleted"
+        if (restaurant) {
+            const removeRestaurant = await Restaurant.findByIdAndRemove(id)
+
+            if  (removeRestaurant) {
+                controller.response.message = "Restaurant deleted"
+            } else {
+                controller.makeServerError()
+            }
         } else {
-            controller.makeServerError()
+            controller.makeError('id', 'Restaurant id does not exist')
         }
     } catch (e) {
         controller.makeServerError()
